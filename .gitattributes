@@ -1,7 +1,6 @@
 # Unity .gitattributes
 # Ensure consistent line endings
 * text=auto
-
 # Unity YAML files - merge as text, use unityyamlmerge
 *.meta merge=unityyamlmerge eol=lf
 *.unity merge=unityyamlmerge eol=lf
@@ -21,7 +20,6 @@
 *.terrainlayer merge=unityyamlmerge eol=lf
 *.mixer merge=unityyamlmerge eol=lf
 *.signal merge=unityyamlmerge eol=lf
-
 # C# scripts - text
 *.cs text eol=lf diff=csharp
 *.shader text eol=lf
@@ -35,9 +33,7 @@
 *.md text eol=lf
 *.asmdef text eol=lf
 *.asmref text eol=lf
-
 # ---- Git LFS ----
-
 # Images
 *.png filter=lfs diff=lfs merge=lfs -text
 *.jpg filter=lfs diff=lfs merge=lfs -text
@@ -50,7 +46,6 @@
 *.exr filter=lfs diff=lfs merge=lfs -text
 *.hdr filter=lfs diff=lfs merge=lfs -text
 *.svg filter=lfs diff=lfs merge=lfs -text
-
 # Audio
 *.mp3 filter=lfs diff=lfs merge=lfs -text
 *.wav filter=lfs diff=lfs merge=lfs -text
@@ -58,13 +53,11 @@
 *.aiff filter=lfs diff=lfs merge=lfs -text
 *.aif filter=lfs diff=lfs merge=lfs -text
 *.flac filter=lfs diff=lfs merge=lfs -text
-
 # Video
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.avi filter=lfs diff=lfs merge=lfs -text
 *.webm filter=lfs diff=lfs merge=lfs -text
-
 # 3D Models
 *.fbx filter=lfs diff=lfs merge=lfs -text
 *.FBX filter=lfs diff=lfs merge=lfs -text
@@ -75,11 +68,9 @@
 *.max filter=lfs diff=lfs merge=lfs -text
 *.mb filter=lfs diff=lfs merge=lfs -text
 *.ma filter=lfs diff=lfs merge=lfs -text
-
 # Fonts
 *.ttf filter=lfs diff=lfs merge=lfs -text
 *.otf filter=lfs diff=lfs merge=lfs -text
-
 # Binaries / Packages
 *.dll filter=lfs diff=lfs merge=lfs -text
 *.zip filter=lfs diff=lfs merge=lfs -text
@@ -87,6 +78,5 @@
 *.apk filter=lfs diff=lfs merge=lfs -text
 *.aab filter=lfs diff=lfs merge=lfs -text
 *.pdf filter=lfs diff=lfs merge=lfs -text
-
 # Terrain & Lighting
 *.raw filter=lfs diff=lfs merge=lfs -text
