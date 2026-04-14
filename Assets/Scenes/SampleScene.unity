@@ -8632,6 +8632,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1353967834}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1636692273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1636692275}
+  - component: {fileID: 1636692274}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1636692274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636692273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53b84e136dab5648a8ada53bb531262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Event_Manager
+  Player: {fileID: 1805525076}
+  AnxietySystem: {fileID: 1805525082}
+--- !u!4 &1636692275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636692273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.21662, y: -0.46, z: -0.81534}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1637776169
 GameObject:
   m_ObjectHideFlags: 0
@@ -9494,9 +9540,10 @@ GameObject:
   - component: {fileID: 1805525079}
   - component: {fileID: 1805525078}
   - component: {fileID: 1805525077}
+  - component: {fileID: 1805525082}
   m_Layer: 0
   m_Name: '[BuildingBlock] Camera Rig'
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9661,6 +9708,24 @@ Transform:
   - {fileID: 2066150649}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1805525082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805525076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71fb6a195474a5644aef5a6a6ded3c23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::System_PlayerAnxiety
+  anxietyLevel: 70
+  anxietyIncreaseRate: 1
+  IsAnxious: 1
+  onAnxietyLevelChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1811731295
 GameObject:
   m_ObjectHideFlags: 0
@@ -11403,3 +11468,4 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1805525081}
   - {fileID: 822347531}
+  - {fileID: 1636692275}
