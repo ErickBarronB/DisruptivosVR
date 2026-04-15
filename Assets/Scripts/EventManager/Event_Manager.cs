@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Event_Manager : MonoBehaviour
@@ -29,5 +28,20 @@ public class Event_Manager : MonoBehaviour
     private void OnAnxietyLevelChanged(Enum_AnxietyLevel level)
     {
         Debug.Log($"[Event_Manager] Anxiety level: {level}");
+
+        switch (level)
+        {
+            case Enum_AnxietyLevel.High:
+                // activar audio leve
+                break;
+
+            case Enum_AnxietyLevel.Critical:
+                // distorsión visual y audio
+                break;
+
+            case Enum_AnxietyLevel.Max:
+                // algo que de panico xd
+                break;
+        }
     }
 }
