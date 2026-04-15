@@ -6,10 +6,22 @@ public class AnxietyECG : MonoBehaviour
     [SerializeField] private int resolution = 120;
     [SerializeField] private float baseSpeed = 1.5f;
     [SerializeField] private float xSpacing = 0.03f;
+    [SerializeField] private RectTransform canvasRect;
+    [SerializeField] private float verticalOffset = -0.4f;
 
     [SerializeField] private System_PlayerAnxiety anxietySystem;
 
     private float time;
+    private Vector3[] positions;
+    private float width;
+    private float height;
+
+    void Start()
+    {
+        positions = new Vector3[resolution];
+        width = canvasRect.rect.width;
+        height = canvasRect.rect.height;
+    }
 
     void Update()
     {
@@ -24,14 +36,22 @@ public class AnxietyECG : MonoBehaviour
 
         for (int i = 0; i < resolution; i++)
         {
-            float x = i * xSpacing;
+            float normalizedX = (float)i / (resolution - 1);
+            float x = normalizedX * width;
 
-            float t = (i * xSpacing + time) % 1f;
+            float t = (normalizedX + time) % 1f;
 
             float y = GenerateECG(t, anxiety);
 
-            line.SetPosition(i, new Vector3(x, y, 0));
+            float maxHeight = height * 0.45f;
+
+            float normalizedY = y / 3.2f;
+
+            float scaledY = normalizedY * maxHeight;
+
+            positions[i] = new Vector3(x, scaledY + verticalOffset, -0.1f);
         }
+        line.SetPositions(positions);
     }
 
     float GenerateECG(float t, float anxiety)
