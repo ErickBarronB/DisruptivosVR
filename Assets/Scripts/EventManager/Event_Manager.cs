@@ -32,15 +32,12 @@ public class Event_Manager : MonoBehaviour
         switch (level)
         {
             case Enum_AnxietyLevel.High:
-                // activar audio leve
                 break;
 
             case Enum_AnxietyLevel.Critical:
-                // distorsión visual y audio
                 break;
 
             case Enum_AnxietyLevel.Max:
-                // algo que de panico xd
                 break;
         }
     }

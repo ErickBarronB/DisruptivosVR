@@ -11,6 +11,6 @@ public class AnxietyUI : MonoBehaviour
         float value = anxietySystem.GetAnxiety();
         Debug.Log("Anxiety: " + value);
 
-        anxietyText.text = $"Anxiety: {Mathf.RoundToInt(value)}%";
+        anxietyText.text = $"Anxiety: {Mathf.RoundToInt(value)}";
     }
 }

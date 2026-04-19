@@ -9,6 +9,8 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     [SerializeField] private float minAnxiety = 0f;
     [SerializeField] private float maxAnxiety = 180f;
 
+    private float currentFloor = 0f;
+
     [Header("Rates")]
     [SerializeField] private float increaseRate = 10f;
     [SerializeField] private float decreaseRate = 1.5f;
@@ -20,6 +22,11 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     [SerializeField] private UnityEvent<Enum_AnxietyLevel> onLevelChanged; // desde el inspector podemos poner que queremos que pase cuando cambia la ansiedad
     public event Action<Enum_AnxietyLevel> AnxietyLevelChanged;
 
+    private void Awake()
+    {
+        UpdateLevel();
+    }
+
     private void Update()
     {
         TickAnxiety(Time.deltaTime);
@@ -29,10 +36,11 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     {
         float normalized = anxiety / maxAnxiety;
 
-        float dynamicDecrease = decreaseRate * (0.5f + normalized);
+        float dynamicDecrease = decreaseRate * Mathf.Lerp(0.5f, 2f,normalized);
 
         anxiety -= dynamicDecrease * deltaTime;
-        anxiety = Mathf.Clamp(anxiety, minAnxiety, maxAnxiety);
+
+        anxiety = Mathf.Clamp(anxiety, currentFloor, maxAnxiety);
 
         UpdateLevel();
     }
@@ -44,9 +52,31 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
         if (newLevel == currentLevel) return;
 
         currentLevel = newLevel;
+
+        UpdateFloor();
+
         AnxietyLevelChanged?.Invoke(newLevel);
         onLevelChanged?.Invoke(newLevel);
     }
+
+    private void UpdateFloor()
+    {
+        switch (currentLevel)
+        {
+            case Enum_AnxietyLevel.High:
+                currentFloor = 80f;
+                break;
+            case Enum_AnxietyLevel.Critical:
+                currentFloor = 120f;
+                break;
+            case Enum_AnxietyLevel.Max:
+                currentFloor = 160f;
+                break;
+            case Enum_AnxietyLevel.Normal:
+                currentFloor = 0f;
+                break;
+        }
+    } 
 
     private Enum_AnxietyLevel GetLevelFromValue(float value)
     {
@@ -65,13 +95,15 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
 
     public void AddAnxiety(float amount)
     {
-        anxiety = Mathf.Clamp(anxiety + amount, minAnxiety, maxAnxiety);
+        anxiety += amount;
+        anxiety = Mathf.Clamp(anxiety, minAnxiety, maxAnxiety);
         UpdateLevel();
     }
 
     public void RemoveAnxiety(float amount)
     {
-        anxiety = Mathf.Clamp(anxiety - amount, minAnxiety, maxAnxiety);
+        anxiety -= amount;
+        anxiety = Mathf.Clamp(anxiety, minAnxiety, maxAnxiety);
         UpdateLevel();
     }
 
