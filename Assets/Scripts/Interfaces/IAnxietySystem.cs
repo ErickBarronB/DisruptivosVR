@@ -5,4 +5,8 @@ public interface IAnxietySystem
     float GetAnxiety();
     bool GetIsAnxious();
     Enum_AnxietyLevel GetAnxietyLevel();
+    bool GetIsIncreasing();
+    void SetIsIncreasing(bool NewIncreasing);
+    void AddAnxietyTrigger(int TriggerAmounts);
+    void RemoveAnxietyTrigger(int TriggerAmounts);
 }

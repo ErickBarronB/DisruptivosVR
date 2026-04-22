@@ -1,4 +1,4 @@
-﻿Shader "Fog/VerticalFog" {
+﻿    Shader "Fog/VerticalFog" {
 
     Properties
     {
@@ -11,6 +11,8 @@
 
         Pass
         {
+            Cull Off
+            ZTest Always
            Blend SrcAlpha OneMinusSrcAlpha
            ZWrite Off
            CGPROGRAM
