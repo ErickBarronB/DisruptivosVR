@@ -5,6 +5,8 @@ public class NPCMovement : MonoBehaviour
     public float speed = 2f;
     private Vector3 target;
 
+    public float arriveDistance = 0.1f;
+
     public void SetTarget(Vector3 newTarget)
     {
         target = newTarget;
@@ -14,8 +16,11 @@ public class NPCMovement : MonoBehaviour
     {
         Vector3 dir = (target - transform.position);
 
-        if (dir.magnitude < 0.1f)
+        if (dir.magnitude < arriveDistance)
+        {
+            gameObject.SetActive(false);
             return;
+        }
 
         dir.Normalize();
 
