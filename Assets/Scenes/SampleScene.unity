@@ -3884,7 +3884,7 @@ MonoBehaviour:
   renderInterval: 1
   renderIntervalFrameOffset: 0
   superSample: 0
-  layer: 5
+  layer: 0
   opacity: 2
   shape: 0
   curveRadius: 1
