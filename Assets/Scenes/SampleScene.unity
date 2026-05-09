@@ -8774,6 +8774,67 @@ SkinnedMeshRenderer:
     m_Center: {x: -3.5085695, y: 0.08475034, z: -0.17565808}
     m_Extent: {x: 0.10651159, y: 0.18774159, z: 0.45612463}
   m_DirtyAABB: 0
+--- !u!1001 &1253995233
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.508
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.5442543
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 383491332470400005, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016054268675145407, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: m_Name
+      value: Hombre1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744442215657439360, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
+      propertyPath: speed
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ce18321e9399d0643b2067c9229c02bd, type: 3}
 --- !u!1 &1267597855
 GameObject:
   m_ObjectHideFlags: 0
@@ -11493,6 +11554,7 @@ GameObject:
   - component: {fileID: 1636692278}
   - component: {fileID: 1636692277}
   - component: {fileID: 1636692279}
+  - component: {fileID: 1636692280}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -11587,7 +11649,7 @@ MonoBehaviour:
   - {fileID: 6967341919224107530, guid: b34d8a132ab60a0429d7c6fffe521a1c, type: 3}
   - {fileID: 5740508955279805212, guid: f0802bb239cd92f4698f4ada9fe1386b, type: 3}
   - {fileID: 8297933500995497423, guid: f430049350568334fb20800489a9fa5f, type: 3}
-  totalPoolSize: 15
+  initialPoolSizePerPrefab: 10
 --- !u!114 &1636692279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11602,6 +11664,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCDistanceDisable
   player: {fileID: 1805525081}
   disableDistance: 40
+--- !u!114 &1636692280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636692273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efdd907c88904b648ad706d3515ce174, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisualFixationSystem
+  vrCamera: {fileID: 138296156}
+  anxietySystem: {fileID: 1805525082}
+  npcPool: {fileID: 1636692278}
+  npcLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  rayDistance: 50
+  rayRadius: 1.5
+  weightIncreaseRate: 5
+  maxWeight: 20
+  weightDecayRate: 1
+  showDebugs: 1
+  currentlyObservedNPC: None
 --- !u!1 &1637776169
 GameObject:
   m_ObjectHideFlags: 0
@@ -12648,6 +12735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _monoscopic: 0
   _sharpenType: 0
+  _disableRecording: 0
   _enableDynamicResolution: 1
   minDynamicResolutionScale: 1
   maxDynamicResolutionScale: 1
@@ -12719,6 +12807,10 @@ MonoBehaviour:
   SimultaneousHandsAndControllersEnabled: 0
   _readOnlyWideMotionModeHandPosesEnabled: 0
   wideMotionModeHandPosesEnabled: 0
+  _readOnlyFastMotionModeHandPosesEnabled: 0
+  fastMotionModeHandPosesEnabled: 0
+  _readOnlyWideMotionMode2HandPosesEnabled: 0
+  wideMotionMode2HandPosesEnabled: 0
   dynamicResolutionVersion: 1
 --- !u!114 &1805525079
 MonoBehaviour:
@@ -14997,3 +15089,4 @@ SceneRoots:
   - {fileID: 162014617}
   - {fileID: 467741898}
   - {fileID: 579424156}
+  - {fileID: 1253995233}
