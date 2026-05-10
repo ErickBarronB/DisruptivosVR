@@ -11,10 +11,18 @@ namespace Minigame
         [Header("Configuración del Jugador")]
         [Tooltip("El tag que deben tener los colliders de la mano para destruir esta caja.")]
         public string handTag = "Hand";
+        [SerializeField] private float anxietyReduction = 5f;
 
         [Header("Efectos Visuales")]
         [Tooltip("Prefab de partículas a instanciar cuando la caja es destruida (Opcional).")]
         public GameObject destructionParticlesPrefab;
+
+        private System_PlayerAnxiety anxietySystem;
+
+        private void Start()
+        {
+            anxietySystem = FindObjectOfType<System_PlayerAnxiety>();
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -25,21 +33,23 @@ namespace Minigame
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            // En caso de que se use un sistema de colisiones estrictamente físicas (no triggers).
-            if (collision.gameObject.CompareTag(handTag))
-            {
-                DestroyBox();
-            }
-        }
-
         private void DestroyBox()
         {
+            if (anxietySystem != null)
+            {
+                anxietySystem.RemoveAnxiety(anxietyReduction);
+            }
+
             // Si hay un sistema de partículas asignado, instanciarlo.
             if (destructionParticlesPrefab != null)
             {
                 Instantiate(destructionParticlesPrefab, transform.position, transform.rotation);
+            }
+
+            AutoDestroyTarget autoDestroy = GetComponent<AutoDestroyTarget>();
+            if (autoDestroy != null)
+            {
+                autoDestroy.DestroyedByPlayer();
             }
 
             // Destruir este objeto.
