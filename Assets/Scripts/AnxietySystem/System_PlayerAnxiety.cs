@@ -5,11 +5,19 @@ using UnityEngine.Events;
 
 public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
 {
+    public enum AnxietyFlowState
+    {
+        None,
+        Increasing,
+        Decreasing
+    }
+
     [Header("Values")]
     [SerializeField] private float anxiety = 70f;
     [SerializeField] private float minAnxiety = 60f; // floor, always Normal
     [SerializeField] private float maxAnxiety = 180f;
-    [SerializeField] private bool isIncreasing = false;
+    [SerializeField] private AnxietyFlowState flowState = AnxietyFlowState.None;
+
     public bool debugsEnabled = false;
 
     [Header("Rates")]
@@ -24,12 +32,13 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     [SerializeField] private UnityEvent<Enum_AnxietyLevel> onLevelChanged;
 
     private int AnxietyTriggers = 0;
+    private Coroutine calmCoroutine;
+
 
     public event Action<Enum_AnxietyLevel> AnxietyLevelChanged;
     public event Action<int> AnxietyTriggerAdded;
     public event Action<int> AnxietyTriggerRemoved;
     public event Action<bool> IsIncreasingChanged;
-    private Coroutine calmCoroutine;
 
     private void Awake()
     {
@@ -48,16 +57,25 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
 
     private void TickAnxiety(float deltaTime)
     {
-        if (isIncreasing)
+        switch (flowState)
         {
-            float dynamicIncrease = increaseRate + (increaseRatePerTrigger * (AnxietyTriggers - 1));
-            anxiety += dynamicIncrease * deltaTime;
-        }
-        else
-        {
-            float normalized = anxiety / maxAnxiety;
-            float dynamicDecrease = decreaseRate * Mathf.Lerp(0.5f, 2f, normalized);
-            anxiety -= dynamicDecrease * deltaTime;
+            case AnxietyFlowState.Increasing:
+                float dynamicIncrease =
+                    increaseRate + (increaseRatePerTrigger * (AnxietyTriggers - 1));
+
+                anxiety += dynamicIncrease * deltaTime;
+                break;
+
+            case AnxietyFlowState.Decreasing:
+                float normalized = anxiety / maxAnxiety;
+                float dynamicDecrease =
+                    decreaseRate * Mathf.Lerp(0.5f, 2f, normalized);
+
+                anxiety -= dynamicDecrease * deltaTime;
+                break;
+
+            case AnxietyFlowState.None:
+                break;
         }
 
         anxiety = Mathf.Clamp(anxiety, minAnxiety, maxAnxiety);
@@ -88,7 +106,14 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
 
     public void CheckAnxietyTriggers()
     {
-        SetIsIncreasing(AnxietyTriggers > 0);
+        if (AnxietyTriggers > 0)
+        {
+            SetFlowState(AnxietyFlowState.Increasing);
+        }
+        else
+        {
+            SetFlowState(AnxietyFlowState.None);
+        }
     }
 
     public void TriggerCalm(float duration)
@@ -103,13 +128,21 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
 
     private IEnumerator CalmRoutine(float duration)
     {
-        bool previousState = isIncreasing;
+        AnxietyFlowState previousState = flowState;
 
-        SetIsIncreasing(false);
+        SetFlowState(AnxietyFlowState.Decreasing);
 
         yield return new WaitForSeconds(duration);
 
-        SetIsIncreasing(previousState);
+        SetFlowState(previousState);
+    }
+
+    public void SetFlowState(AnxietyFlowState newState)
+    {
+        flowState = newState;
+
+        bool isIncreasingNow = flowState == AnxietyFlowState.Increasing;
+        IsIncreasingChanged?.Invoke(isIncreasingNow);
     }
 
     #region Interface Methods
@@ -131,12 +164,18 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     public float GetAnxiety() => anxiety;
     public bool GetIsAnxious() => IsAnxious();
     public Enum_AnxietyLevel GetAnxietyLevel() => currentLevel;
-    public bool GetIsIncreasing() => isIncreasing;
-
-    public void SetIsIncreasing(bool NewIncreasing)
+    public bool GetIsIncreasing()
     {
-        isIncreasing = NewIncreasing;
-        IsIncreasingChanged?.Invoke(NewIncreasing);
+        return flowState == AnxietyFlowState.Increasing;
+    }
+
+    public void SetIsIncreasing(bool newIncreasing)
+    {
+        SetFlowState(
+            newIncreasing
+                ? AnxietyFlowState.Increasing
+                : AnxietyFlowState.None
+        );
     }
 
     public void AddAnxietyTrigger(int TriggerAmounts)
