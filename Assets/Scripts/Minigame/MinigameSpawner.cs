@@ -49,20 +49,26 @@ public class MinigameSpawner : MonoBehaviour
         Transform centerEye = Camera.main.transform;
 
         Vector3 forward = centerEye.forward;
+        forward.y = 0;
+        forward.Normalize();
+
         Vector3 right = centerEye.right;
-        Vector3 up = centerEye.up;
 
         float horizontalOffset = Random.Range(-0.8f, 0.8f);
-        float verticalOffset = Random.Range(-0.3f, 0.4f);
+        float verticalOffset = Random.Range(-0.2f, 0.3f);
 
-        Vector3 spawnPosition = centerEye.position + forward * spawnDistance + right * horizontalOffset +up * verticalOffset;
+        Vector3 spawnPosition =
+            centerEye.position +
+            forward * spawnDistance +
+            right * horizontalOffset +
+            Vector3.up * verticalOffset;
 
         GameObject target = Instantiate(targetPrefab, spawnPosition, Quaternion.identity);
 
         MoveToPlayer moveScript = target.GetComponent<MoveToPlayer>();
         if (moveScript != null)
         {
-            moveScript.SetTarget(player);
+            moveScript.SetTarget(Camera.main.transform);
         }
 
         spawnedTargets++;
