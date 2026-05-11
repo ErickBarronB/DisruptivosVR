@@ -1,35 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro; // Necesario para TextMeshPro
+using TMPro;
+
+[System.Serializable]
+public struct DialogueLine
+{
+    public string line;
+    public float typingSpeed;
+
+    public DialogueLine(string line, float typingSpeed)
+    {
+        this.line = line;
+        this.typingSpeed = typingSpeed;
+    }
+}
 
 public class WorldSpaceDialogueSystem : MonoBehaviour
 {
     public static WorldSpaceDialogueSystem Instance { get; private set; }
 
     [Header("Settings")]
-    [Tooltip("Prefab opcional con un TextMeshPro. Si se deja vacío, se creará uno por código.")]
-    [SerializeField] private GameObject textPrefab; 
-    [SerializeField] private float typingSpeed = 0.05f;
+    [SerializeField] private GameObject textPrefab;
+    [HideInInspector] public float typingSpeed = 0.05f;
+    public float readingDelay = 2f;
 
     private TextMeshPro dialogueTextComponent;
     private GameObject dialogueObject;
-    
+
     private Coroutine typingCoroutine;
-    private List<string> currentLines;
+    private List<DialogueLine> currentLines;
     private int currentLineIndex = 0;
     private bool isTyping = false;
 
     private void Awake()
     {
-        // Configuración del Singleton para fácil acceso
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        
+        DontDestroyOnLoad(gameObject);
         InitializeDialogueObject();
     }
 
@@ -42,73 +50,73 @@ public class WorldSpaceDialogueSystem : MonoBehaviour
         }
         else
         {
-            // Instanciar el objeto desde cero si no hay prefab
             dialogueObject = new GameObject("WorldSpaceDialogueText");
             dialogueTextComponent = dialogueObject.AddComponent<TextMeshPro>();
-            
-            // Configuración básica para que sea visible en World Space
             dialogueTextComponent.alignment = TextAlignmentOptions.Center;
             dialogueTextComponent.fontSize = 5;
             dialogueTextComponent.color = Color.white;
-            
-            // Añadir un RectTransform con tamaño predeterminado
             RectTransform rect = dialogueTextComponent.GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(10, 5);
         }
 
-        // Hacerlo hijo de este manager para mantener limpia la jerarquía (Opcional)
         dialogueObject.transform.SetParent(transform);
-
-        // Desactivar el render inicialmente
+        dialogueTextComponent.fontMaterial = new Material(dialogueTextComponent.fontMaterial);
+        dialogueTextComponent.fontMaterial.shader = Shader.Find("TextMeshPro/Distance Field Overlay");
         SetRenderActive(false);
     }
 
-    /// <summary>
-    /// Activa o desactiva el renderizado del texto.
-    /// </summary>
     public void SetRenderActive(bool isActive)
     {
         if (dialogueTextComponent != null)
-        {
-            // Solo desactivamos el componente renderer para no romper otras lógicas si las hubiera
             dialogueTextComponent.enabled = isActive;
-        }
     }
 
-    /// <summary>
-    /// Función principal que instancia/reposiciona el texto y comienza a mostrar las líneas.
-    /// </summary>
+    // --- String overloads (backwards compatible) ---
     public void PlayDialogue(List<string> linesToDisplay, Vector3 position)
     {
-        if (linesToDisplay == null || linesToDisplay.Count == 0) return;
-
-        // Reposicionar el objeto
-        dialogueObject.transform.position = position;
-
-        // Activar el render
-        SetRenderActive(true);
-
-        currentLines = linesToDisplay;
-        currentLineIndex = 0;
-
-        ShowNextLine();
+        PlayDialogue(ToDialogueLines(linesToDisplay, typingSpeed), position);
     }
 
-    /// <summary>
-    /// Muestra la siguiente línea o termina la línea actual de golpe si se está escribiendo.
-    /// </summary>
+    public void PlayDialogue(List<string> linesToDisplay, Vector3 position, float fontSize)
+    {
+        dialogueTextComponent.fontSize = fontSize;
+        PlayDialogue(ToDialogueLines(linesToDisplay, typingSpeed), position);
+    }
+
+    // --- DialogueLine overloads ---
+public void PlayDialogue(List<DialogueLine> linesToDisplay, Vector3 position)
+{
+    if (linesToDisplay == null || linesToDisplay.Count == 0) return;
+
+    if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+
+    // Reset parent before positioning so world position is always correct
+    dialogueObject.transform.SetParent(transform);
+    dialogueObject.transform.position = position;
+    SetRenderActive(true);
+
+    currentLines = linesToDisplay;
+    currentLineIndex = 0;
+    isTyping = false;
+
+    ShowNextLine();
+}
+    public void PlayDialogue(List<DialogueLine> linesToDisplay, Vector3 position, float fontSize)
+    {
+        dialogueTextComponent.fontSize = fontSize;
+        PlayDialogue(linesToDisplay, position);
+    }
+
     public void ShowNextLine()
     {
-        // Si está escribiendo, forzamos a que termine la línea actual inmediatamente
         if (isTyping)
         {
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-            dialogueTextComponent.text = currentLines[currentLineIndex - 1];
+            dialogueTextComponent.text = currentLines[currentLineIndex - 1].line;
             isTyping = false;
             return;
         }
 
-        // Si hay más líneas, mostramos la siguiente
         if (currentLineIndex < currentLines.Count)
         {
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
@@ -117,43 +125,49 @@ public class WorldSpaceDialogueSystem : MonoBehaviour
         }
         else
         {
-            // Terminó el diálogo
             SetRenderActive(false);
             dialogueTextComponent.text = string.Empty;
+            dialogueObject.transform.SetParent(transform); // reset parent back to manager
         }
     }
 
-    /// <summary>
-    /// Corrutina para lograr el efecto de máquina de escribir.
-    /// </summary>
-    private IEnumerator TypeText(string line)
+    private IEnumerator TypeText(DialogueLine dialogueLine)
     {
         isTyping = true;
         dialogueTextComponent.text = "";
 
-        // Mostramos letra por letra
-        foreach (char letter in line.ToCharArray())
+        foreach (char letter in dialogueLine.line.ToCharArray())
         {
             dialogueTextComponent.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
+            yield return new WaitForSeconds(dialogueLine.typingSpeed);
         }
 
         isTyping = false;
+        yield return new WaitForSeconds(readingDelay);
+        ShowNextLine();
     }
 
-    /// <summary>
-    /// Opcional: Hace que el texto siempre mire hacia la cámara principal para que sea legible.
-    /// </summary>
     private void Update()
     {
         if (dialogueTextComponent != null && dialogueTextComponent.enabled)
         {
             Camera mainCamera = Camera.main;
             if (mainCamera != null)
-            {
-                // Hacer que el texto mire a la cámara
                 dialogueObject.transform.rotation = Quaternion.LookRotation(dialogueObject.transform.position - mainCamera.transform.position);
-            }
         }
+    }
+
+    public void SetParent(Transform parent)
+    {
+        if (dialogueObject != null)
+            dialogueObject.transform.SetParent(parent);
+    }
+
+    private List<DialogueLine> ToDialogueLines(List<string> lines, float speed)
+    {
+        List<DialogueLine> result = new List<DialogueLine>();
+        foreach (string line in lines)
+            result.Add(new DialogueLine(line, speed));
+        return result;
     }
 }
