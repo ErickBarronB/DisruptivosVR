@@ -37,7 +37,7 @@ namespace Minigame
         {
             if (anxietySystem != null)
             {
-                anxietySystem.RemoveAnxiety(anxietyReduction);
+                anxietySystem.TriggerCalm(2f);
             }
 
             // Si hay un sistema de partículas asignado, instanciarlo.

@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class MinigameSpawner : MonoBehaviour
 {
+    [Header("SetUp")]
     [SerializeField] private GameObject targetPrefab;
     [SerializeField] private Transform player;
-    [SerializeField] private float spawnRadius = 1.5f;
+
+    [Header("SpawnConfigs")]
+    [SerializeField] private float spawnDistance = 2.5f;
     [SerializeField] private float spawnInterval = 1f;
 
     [SerializeField] private int maxTargetsToSpawn = 15;
@@ -43,11 +46,25 @@ public class MinigameSpawner : MonoBehaviour
 
     private void SpawnTarget()
     {
-        Vector3 randomPos = player.position + Random.onUnitSphere * spawnRadius;
+        Transform centerEye = Camera.main.transform;
 
-        randomPos.y = Mathf.Clamp(randomPos.y, player.position.y - 0.3f, player.position.y + 0.8f);
+        Vector3 forward = centerEye.forward;
+        Vector3 right = centerEye.right;
+        Vector3 up = centerEye.up;
 
-        Instantiate(targetPrefab, randomPos, Quaternion.identity);
+        float horizontalOffset = Random.Range(-0.8f, 0.8f);
+        float verticalOffset = Random.Range(-0.3f, 0.4f);
+
+        Vector3 spawnPosition = centerEye.position + forward * spawnDistance + right * horizontalOffset +up * verticalOffset;
+
+        GameObject target = Instantiate(targetPrefab, spawnPosition, Quaternion.identity);
+
+        MoveToPlayer moveScript = target.GetComponent<MoveToPlayer>();
+        if (moveScript != null)
+        {
+            moveScript.SetTarget(player);
+        }
+
         spawnedTargets++;
     }
 }

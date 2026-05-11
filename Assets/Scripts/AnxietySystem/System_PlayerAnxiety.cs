@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,6 +29,7 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     public event Action<int> AnxietyTriggerAdded;
     public event Action<int> AnxietyTriggerRemoved;
     public event Action<bool> IsIncreasingChanged;
+    private Coroutine calmCoroutine;
 
     private void Awake()
     {
@@ -87,6 +89,27 @@ public class System_PlayerAnxiety : MonoBehaviour, IAnxietySystem
     public void CheckAnxietyTriggers()
     {
         SetIsIncreasing(AnxietyTriggers > 0);
+    }
+
+    public void TriggerCalm(float duration)
+    {
+        if (calmCoroutine != null)
+        {
+            StopCoroutine(calmCoroutine);
+        }
+
+        calmCoroutine = StartCoroutine(CalmRoutine(duration));
+    }
+
+    private IEnumerator CalmRoutine(float duration)
+    {
+        bool previousState = isIncreasing;
+
+        SetIsIncreasing(false);
+
+        yield return new WaitForSeconds(duration);
+
+        SetIsIncreasing(previousState);
     }
 
     #region Interface Methods
